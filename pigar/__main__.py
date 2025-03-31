@@ -223,7 +223,20 @@ def generate(
     requirement_file = os.path.abspath(requirement_file)
     project_path = os.path.abspath(project_path)
 
+    magic_dict = {
+        "PIL": "pillow",
+        "skimage": "scikit-image",
+        "cv2": "opencv-python",
+    }
+
     def _dists_filter(import_name, locations, distributions, best_match):
+        # magic_dict should have the highest priority
+        if import_name in magic_dict:
+            name = magic_dict[import_name]
+            # find item in distributions that has the same name
+            for dist in distributions:
+                if dist.name == name:
+                    return [dist]
         if auto_select:
             if best_match:
                 return [best_match]
